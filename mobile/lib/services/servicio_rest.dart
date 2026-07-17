@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:weather/model/observacion_meteo.dart';
+import 'package:weather/model/farmacia.dart';
 
 /// Servicio REST para consumir la API de observaciones meteorológicas.
 ///
@@ -175,7 +176,7 @@ class ServicioRest {
       case 403:
         return Exception('No tiene permisos para acceder a este recurso');
       case 404:
-        return Exception('No hay observaciones cercanas al punto dado');
+        return Exception('No se encontraron datos para la ubicación indicada');
       case 500:
       case 502:
       case 503:
@@ -271,6 +272,63 @@ class ServicioRest {
       } catch (e) {
         _logger.e('Error al parsear respuesta: $e');
         throw Exception('Error al procesar los datos de la observación');
+      }
+    } on DioException catch (e) {
+      throw _mapearExcepcion(e);
+    } catch (e) {
+      _logger.e('Error inesperado: $e');
+      rethrow;
+    }
+  }
+
+  /// Obtiene la farmacia más cercana a las coordenadas dadas.
+  ///
+  /// Realiza una petición GET al endpoint
+  /// `/v1/farmacias/{latitud}/{longitud}`.
+  ///
+  /// Retorna un objeto [Farmacia].
+  Future<Farmacia> obtenerFarmaciaCercana({
+    required String idToken,
+    required double latitud,
+    required double longitud,
+  }) async {
+    if (latitud < -90 || latitud > 90) {
+      throw Exception('Latitud inválida: debe estar entre -90 y 90');
+    }
+
+    if (longitud < -180 || longitud > 180) {
+      throw Exception('Longitud inválida: debe estar entre -180 y 180');
+    }
+
+    final String ruta = '/v1/farmacias/$latitud/$longitud';
+
+    try {
+      _clienteHttp.options.headers['Authorization'] = 'Bearer $idToken';
+
+      _logger.i('Consultando farmacia en: $ruta');
+
+      final Response<dynamic> respuesta =
+      await _clienteHttp.get<dynamic>(ruta);
+
+      if (respuesta.data == null) {
+        throw Exception('La respuesta del servidor está vacía');
+      }
+
+      if (respuesta.data is! Map<String, dynamic>) {
+        _logger.e(
+          'Tipo de respuesta inesperado: ${respuesta.data.runtimeType}',
+        );
+        throw Exception('Formato de respuesta inesperado');
+      }
+
+      final Map<String, dynamic> json =
+      respuesta.data as Map<String, dynamic>;
+
+      try {
+        return Farmacia.fromJson(json);
+      } catch (e) {
+        _logger.e('Error al parsear respuesta: $e');
+        throw Exception('Error al procesar los datos de la farmacia');
       }
     } on DioException catch (e) {
       throw _mapearExcepcion(e);
