@@ -3,10 +3,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:provider/provider.dart';
 import 'package:weather/consts/app_colors.dart';
 import 'package:weather/controller/weather_screen_controller.dart';
-import 'package:weather/model/observacion_meteo.dart';
 import 'package:weather/widgets/my_menu.dart';
 import 'package:weather/screen/farmacia_screen.dart';
 import 'package:weather/widgets/widget_mapa.dart';
+import 'package:weather/widgets/clima_widget.dart';
 
 /// Pantalla principal de monitoreo meteorológico.
 ///
@@ -162,7 +162,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     thickness: 2.0,
                     color: AppColors.naranjaPrimario,
                   ),
-                  Expanded(flex: 1, child: _construirSeccionClima(controlador)),
+                  Expanded(
+                    flex: 1,
+                    child: ClimaWidget(
+                      controlador: controlador,
+                    ),
+                  ),
                 ],
               );
             },
@@ -252,86 +257,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
             style: TextStyle(fontSize: 16.0, color: AppColors.gris),
             textAlign: TextAlign.center,
           ),
-        ],
-      ),
-    );
-  }
-
-  /// Construye la sección del mapa con la ubicación actual.
-  ///
-  /// Utiliza [FlutterMap] con una capa de teselas de OpenStreetMap y
-  /// un marcador (pin rojo) en la coordenada del usuario.
-  ///
-  /// - [controlador]: Controlador que contiene la coordenada actual.
-  ///   Asume que [controlador.coordenadaActual] no es null.
-  /// - El centro del mapa se establece en la coordenada actual con un
-  ///   zoom inicial de 15.0.
-
-  /// Construye una fila con etiqueta y valor para los datos climáticos.
-  ///
-  /// - [etiqueta]: Texto descriptivo del indicador (ej: "Temperatura").
-  /// - [valor]: Valor formateado del indicador (ej: "18.5 ºC").
-  ///
-  /// La etiqueta usa un estilo de texto normal (negrita), mientras que
-  /// el valor usa [AppColors.azulAcentuado] y negrita para resaltar.
-  Widget _construirFilaClima(String etiqueta, String valor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            etiqueta,
-            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-          ),
-          Text(
-            valor,
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: AppColors.azulAcentuado,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Construye la sección de indicadores climáticos.
-  ///
-  /// Muestra un título y una lista de filas con los datos de la
-  /// observación meteorológica actual.
-  ///
-  /// - [controlador]: Controlador que contiene la observación.
-  ///   Asume que [controlador.observacionMeteo] no es null.
-  /// - Los indicadores mostrados son:
-  ///   - ID de observación (texto)
-  ///   - Temperatura (con 1 decimal, en ºC)
-  ///   - Humedad (sin decimales, en %)
-  ///   - Radiación UV (sin formato)
-  ///
-  /// El widget está envuelto en [SingleChildScrollView] para permitir
-  /// el desplazamiento vertical en pantallas pequeñas.
-  Widget _construirSeccionClima(WeatherScreenController controlador) {
-    final ObservacionMeteo clima = controlador.observacionMeteo!;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            'Indicadores Climáticos Actuales',
-            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16.0),
-          _construirFilaClima('ID Observación', clima.idObservacion.toString()),
-          _construirFilaClima(
-            'Temperatura',
-            '${clima.temperatura.toStringAsFixed(1)} ºC',
-          ),
-          _construirFilaClima('Humedad', '${clima.humedad.toString()}%'),
-          _construirFilaClima('UV', '${clima.ultravioleta}'),
         ],
       ),
     );
