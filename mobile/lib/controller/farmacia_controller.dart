@@ -5,6 +5,7 @@ import 'package:weather/model/farmacia.dart';
 import 'package:weather/services/servicio_google.dart';
 import 'package:weather/services/servicio_rest.dart';
 import 'package:weather/services/servicio_ubicacion.dart';
+import 'package:weather/services/servicio_distancia.dart';
 
 class FarmaciaController extends ChangeNotifier {
   static final Logger _logger = Logger();
@@ -12,6 +13,7 @@ class FarmaciaController extends ChangeNotifier {
   final ServicioRest _servicioRest;
   final ServicioUbicacion _servicioUbicacion;
   final ServicioGoogle _servicioGoogle;
+  final ServicioDistancia _servicioDistancia;
 
   Coordenada? _coordenadaActual;
   Farmacia? _farmacia;
@@ -19,12 +21,11 @@ class FarmaciaController extends ChangeNotifier {
   bool _estaCargando = false;
 
   FarmaciaController({
-    required ServicioRest servicioRest,
-    required ServicioUbicacion servicioUbicacion,
-    required ServicioGoogle servicioGoogle,
-  })  : _servicioRest = servicioRest,
-        _servicioUbicacion = servicioUbicacion,
-        _servicioGoogle = servicioGoogle;
+    required this._servicioRest,
+    required this._servicioUbicacion,
+    required this._servicioGoogle,
+    required this._servicioDistancia,
+  });
 
   bool get estaCargando => _estaCargando;
   String? get mensajeError => _mensajeError;
@@ -49,6 +50,17 @@ class FarmaciaController extends ChangeNotifier {
         latitud: _coordenadaActual!.latitud,
         longitud: _coordenadaActual!.longitud,
       );
+
+      final distancia =
+      _servicioDistancia.calcularDistancia(
+        latitudOrigen: _coordenadaActual!.latitud,
+        longitudOrigen: _coordenadaActual!.longitud,
+        latitudDestino: _farmacia!.latitud,
+        longitudDestino: _farmacia!.longitud,
+      );
+
+
+      _farmacia!.distancia = distancia;
 
       _logger.i(
         'Farmacia encontrada: ${_farmacia!.nombre}',

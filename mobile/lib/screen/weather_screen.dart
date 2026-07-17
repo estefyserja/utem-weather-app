@@ -7,6 +7,7 @@ import 'package:weather/controller/weather_screen_controller.dart';
 import 'package:weather/model/coordenada.dart';
 import 'package:weather/model/observacion_meteo.dart';
 import 'package:weather/widgets/my_menu.dart';
+import 'package:weather/screen/farmacia_screen.dart';
 
 /// Pantalla principal de monitoreo meteorológico.
 ///
@@ -107,6 +108,20 @@ class _WeatherScreenState extends State<WeatherScreen> {
       appBar: AppBar(
         title: const Text('Monitoreo Meteorológico'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.local_pharmacy),
+            tooltip: 'Farmacia más cercana',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FarmaciaScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       drawer: MyMenu(),
       body: Consumer<WeatherScreenController>(

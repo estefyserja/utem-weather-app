@@ -15,6 +15,7 @@ class Farmacia {
   String telefono;
   String aperturaNormal;
   String cierreNormal;
+  double? distancia;
 
   /// Constructor completo.
   Farmacia({
@@ -27,6 +28,7 @@ class Farmacia {
     required this.telefono,
     required this.aperturaNormal,
     required this.cierreNormal,
+    this.distancia,
   });
 
   /// Crea una instancia de [Farmacia] a partir de un JSON.
@@ -40,6 +42,7 @@ class Farmacia {
     telefono: json["telefono"].toString(),
     aperturaNormal: json["apertura_normal"],
     cierreNormal: json["cierre_normal"],
+    distancia: json["distancia"]?.toDouble(),
   );
 
   /// Convierte la instancia a un mapa JSON.
@@ -53,5 +56,6 @@ class Farmacia {
     "telefono": telefono,
     "apertura_normal": aperturaNormal,
     "cierre_normal": cierreNormal,
+    "distancia": distancia,
   };
 }
