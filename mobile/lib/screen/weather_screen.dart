@@ -337,6 +337,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     final Coordenada coordenada = controlador.coordenadaActual!;
     final LatLng puntoCentral = LatLng(coordenada.latitud, coordenada.longitud);
 
+    final Farmacia? farmacia = controlador.farmacia;
     return FlutterMap(
       options: MapOptions(initialCenter: puntoCentral, initialZoom: 15.0),
       children: <Widget>[
@@ -346,8 +347,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         ),
         MarkerLayer(
           markers: <Marker>[
-
-            // Ubicación usuario
+            // Marcador del usuario
             Marker(
               point: puntoCentral,
               width: 40,
@@ -359,33 +359,28 @@ class _WeatherScreenState extends State<WeatherScreen> {
               ),
             ),
 
-
-            // Farmacia cercana
-            if (controlador.farmacia != null)
+            // Marcador farmacia
+            if (farmacia != null)
               Marker(
                 point: LatLng(
-                  controlador.farmacia!.latitud,
-                  controlador.farmacia!.longitud,
+                  farmacia.latitud,
+                  farmacia.longitud,
                 ),
                 width: 50,
                 height: 50,
                 child: GestureDetector(
                   onTap: () {
-                    _mostrarFarmacia(
-                      context,
-                      controlador.farmacia!,
-                    );
+                    _mostrarFarmacia(context, farmacia);
                   },
                   child: const Icon(
                     Icons.local_pharmacy,
                     color: Colors.green,
-                    size: 45,
+                    size: 40,
                   ),
                 ),
               ),
-
           ],
-        )
+        ),
       ],
     );
   }

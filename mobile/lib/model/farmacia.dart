@@ -6,15 +6,15 @@
 /// Se utiliza para transferir la información desde el servicio REST
 /// hasta la interfaz de usuario.
 class Farmacia {
-  double latitud;
-  double longitud;
-  String cadena;
-  int tienda;
-  String nombre;
-  String direccion;
-  String telefono;
-  String aperturaNormal;
-  String cierreNormal;
+  final double latitud;
+  final double longitud;
+  final String cadena;
+  final int tienda;
+  final String nombre;
+  final String direccion;
+  final String telefono;
+  final String aperturaNormal;
+  final String cierreNormal;
   double? distancia;
 
   /// Constructor completo.

@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:logger/logger.dart';
 
 class ServicioDistancia {
+  static final Logger _logger = Logger();
 
   double calcularDistancia({
     required double latitudOrigen,
@@ -9,7 +11,7 @@ class ServicioDistancia {
     required double longitudDestino,
   }) {
 
-    const radioTierra = 6371; // kilómetros
+    const radioTierra = 6371;
 
     final diferenciaLat =
     _gradosARadianes(latitudDestino - latitudOrigen);
@@ -29,8 +31,13 @@ class ServicioDistancia {
 
     final c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
+    final distancia = radioTierra * c;
 
-    return radioTierra * c;
+    _logger.i(
+        'ORIGEN: $latitudOrigen, $longitudOrigen'
+    );
+
+    return distancia;
   }
 
 

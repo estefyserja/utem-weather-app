@@ -63,7 +63,15 @@ class FarmaciaController extends ChangeNotifier {
       _farmacia!.distancia = distancia;
 
       _logger.i(
-        'Farmacia encontrada: ${_farmacia!.nombre}',
+        '''
+        Usuario:
+        ${_coordenadaActual!.latitud},
+        ${_coordenadaActual!.longitud}
+        
+        Farmacia:
+        ${_farmacia!.latitud},
+        ${_farmacia!.longitud}
+        ''',
       );
     } catch (e) {
       _mensajeError = e.toString().replaceFirst('Exception: ', '');
