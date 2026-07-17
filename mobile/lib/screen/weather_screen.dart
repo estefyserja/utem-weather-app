@@ -7,6 +7,7 @@ import 'package:weather/controller/weather_screen_controller.dart';
 import 'package:weather/model/coordenada.dart';
 import 'package:weather/model/observacion_meteo.dart';
 import 'package:weather/widgets/my_menu.dart';
+import 'package:weather/model/farmacia.dart';
 import 'package:weather/screen/farmacia_screen.dart';
 
 /// Pantalla principal de monitoreo meteorológico.
@@ -100,6 +101,76 @@ class _WeatherScreenState extends State<WeatherScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<WeatherScreenController>().inicializarDatos();
     });
+  }
+
+  void _mostrarFarmacia(
+      BuildContext context,
+      Farmacia farmacia,
+      ) {
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+
+        title: Row(
+          children: const [
+            Icon(
+              Icons.local_pharmacy,
+              color: Colors.green,
+            ),
+            SizedBox(width: 10),
+            Text('Farmacia cercana'),
+          ],
+        ),
+
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Text(
+              farmacia.nombre,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+
+            const SizedBox(height:10),
+
+            Text(
+              'Dirección:\n${farmacia.direccion}',
+            ),
+
+            const SizedBox(height:10),
+
+            Text(
+              'Horario:\n${farmacia.aperturaNormal} - ${farmacia.cierreNormal}',
+            ),
+
+            const SizedBox(height:10),
+
+            Text(
+              farmacia.distancia != null
+                  ? 'Distancia: ${farmacia.distancia!.toStringAsFixed(2)} km'
+                  : '',
+            ),
+
+          ],
+        ),
+
+        actions:[
+          TextButton(
+            onPressed: (){
+              Navigator.pop(context);
+            },
+            child: const Text('Cerrar'),
+          )
+        ],
+
+      ),
+    );
+
   }
 
   @override
@@ -275,18 +346,46 @@ class _WeatherScreenState extends State<WeatherScreen> {
         ),
         MarkerLayer(
           markers: <Marker>[
+
+            // Ubicación usuario
             Marker(
               point: puntoCentral,
-              width: 40.0,
-              height: 40.0,
+              width: 40,
+              height: 40,
               child: const Icon(
                 Icons.location_pin,
                 color: AppColors.rojo,
-                size: 40.0,
+                size: 40,
               ),
             ),
+
+
+            // Farmacia cercana
+            if (controlador.farmacia != null)
+              Marker(
+                point: LatLng(
+                  controlador.farmacia!.latitud,
+                  controlador.farmacia!.longitud,
+                ),
+                width: 50,
+                height: 50,
+                child: GestureDetector(
+                  onTap: () {
+                    _mostrarFarmacia(
+                      context,
+                      controlador.farmacia!,
+                    );
+                  },
+                  child: const Icon(
+                    Icons.local_pharmacy,
+                    color: Colors.green,
+                    size: 45,
+                  ),
+                ),
+              ),
+
           ],
-        ),
+        )
       ],
     );
   }

@@ -10,6 +10,7 @@ import 'package:weather/services/servicio_almacenamiento.dart';
 import 'package:weather/services/servicio_google.dart';
 import 'package:weather/services/servicio_rest.dart';
 import 'package:weather/services/servicio_ubicacion.dart';
+import 'package:weather/services/servicio_distancia.dart';
 
 /// Menú lateral (Drawer) de la aplicación.
 ///
@@ -236,6 +237,7 @@ class MyMenu extends StatelessWidget {
                                           .read<ServicioUbicacion>(),
                                       servicioGoogle: context
                                           .read<ServicioGoogle>(),
+                                      servicioDistancia: ServicioDistancia(),
                                     ),
                                 child: const WeatherScreen(),
                               ),

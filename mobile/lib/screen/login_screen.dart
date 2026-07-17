@@ -8,6 +8,7 @@ import 'package:weather/services/servicio_google.dart';
 import 'package:weather/services/servicio_rest.dart';
 import 'package:weather/services/servicio_ubicacion.dart';
 import 'package:weather/consts/app_colors.dart';
+import 'package:weather/services/servicio_distancia.dart';
 
 /// Pantalla de inicio de sesión con autenticación vía Google.
 ///
@@ -186,6 +187,7 @@ class _LoginScreenState extends State<LoginScreen>
                       servicioRest: context.read<ServicioRest>(),
                       servicioUbicacion: context.read<ServicioUbicacion>(),
                       servicioGoogle: _servicioGoogle,
+                      servicioDistancia: ServicioDistancia(),
                     ),
                     child: const WeatherScreen(),
                   ),

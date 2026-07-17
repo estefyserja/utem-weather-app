@@ -5,7 +5,8 @@ import 'package:weather/model/observacion_meteo.dart';
 import 'package:weather/services/servicio_google.dart';
 import 'package:weather/services/servicio_rest.dart';
 import 'package:weather/services/servicio_ubicacion.dart';
-
+import 'package:weather/model/farmacia.dart';
+import 'package:weather/services/servicio_distancia.dart';
 /// Controlador de la pantalla principal del clima.
 ///
 /// Orquesta la obtención de ubicación, autenticación y consulta meteorológica.
@@ -91,16 +92,19 @@ class WeatherScreenController extends ChangeNotifier {
   final ServicioRest _servicioRest;
   final ServicioUbicacion _servicioUbicacion;
   final ServicioGoogle _servicioGoogle;
+  final ServicioDistancia _servicioDistancia;
 
   Coordenada? _coordenadaActual;
   ObservacionMeteo? _observacionMeteo;
   String? _mensajeError;
   bool _estaCargando = false;
+  Farmacia? _farmacia;
 
   WeatherScreenController({
     required this._servicioRest,
     required this._servicioUbicacion,
     required this._servicioGoogle,
+    required this._servicioDistancia,
   });
 
   /// Indica si el controlador está realizando una operación de carga.
@@ -128,6 +132,9 @@ class WeatherScreenController extends ChangeNotifier {
   /// no son nulas. Esto garantiza que la UI pueda renderizar ambos elementos.
   bool get tieneDatos => _observacionMeteo != null && _coordenadaActual != null;
 
+  // FARMACIA
+  Farmacia? get farmacia => _farmacia;
+
   /// Inicializa los datos de la pantalla ejecutando el flujo completo.
   ///
   /// Establece [estaCargando] a `true`, obtiene token, ubicación y observación.
@@ -150,6 +157,18 @@ class WeatherScreenController extends ChangeNotifier {
         latitud: _coordenadaActual!.latitud,
         longitud: _coordenadaActual!.longitud,
       );
+      _farmacia = await _servicioRest.obtenerFarmaciaCercana(
+        idToken: idToken,
+        latitud: _coordenadaActual!.latitud,
+        longitud: _coordenadaActual!.longitud,
+      );
+      _farmacia!.distancia =
+          _servicioDistancia.calcularDistancia(
+            latitudOrigen: _coordenadaActual!.latitud,
+            longitudOrigen: _coordenadaActual!.longitud,
+            latitudDestino: _farmacia!.latitud,
+            longitudDestino: _farmacia!.longitud,
+          );
       _logger.i(
         'Datos inicializados correctamente en '
         '${_coordenadaActual!.latitud}, ${_coordenadaActual!.longitud}',
