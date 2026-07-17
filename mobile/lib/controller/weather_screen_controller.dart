@@ -152,16 +152,22 @@ class WeatherScreenController extends ChangeNotifier {
     try {
       final String idToken = await _obtenerTokenValido();
       _coordenadaActual = await _servicioUbicacion.obtenerUbicacionActual();
-      _observacionMeteo = await _servicioRest.obtenerObservacionCercana(
-        idToken: idToken,
-        latitud: _coordenadaActual!.latitud,
-        longitud: _coordenadaActual!.longitud,
-      );
-      _farmacia = await _servicioRest.obtenerFarmaciaCercana(
-        idToken: idToken,
-        latitud: _coordenadaActual!.latitud,
-        longitud: _coordenadaActual!.longitud,
-      );
+      final resultados = await Future.wait([
+        _servicioRest.obtenerObservacionCercana(
+          idToken: idToken,
+          latitud: _coordenadaActual!.latitud,
+          longitud: _coordenadaActual!.longitud,
+        ),
+        _servicioRest.obtenerFarmaciaCercana(
+          idToken: idToken,
+          latitud: _coordenadaActual!.latitud,
+          longitud: _coordenadaActual!.longitud,
+        ),
+      ]);
+
+      _observacionMeteo = resultados[0] as ObservacionMeteo;
+      _farmacia = resultados[1] as Farmacia;
+
       _farmacia!.distancia =
           _servicioDistancia.calcularDistancia(
             latitudOrigen: _coordenadaActual!.latitud,
