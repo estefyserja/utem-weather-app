@@ -9,8 +9,12 @@ import 'package:weather/consts/app_colors.dart';
 import 'package:weather/model/coordenada.dart';
 
 class MapaClimaWidget extends StatelessWidget {
+  final Coordenada coordenada;
+  final Farmacia? farmacia;
   const MapaClimaWidget({
     super.key,
+    required this.coordenada,
+    this.farmacia,
   });
 
   void _mostrarFarmacia(

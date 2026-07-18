@@ -4,6 +4,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:weather/consts/app_colors.dart';
 import 'package:weather/screen/login_screen.dart';
 
+import 'package:provider/provider.dart';
+import 'package:weather/controller/weather_screen_controller.dart';
+import 'package:weather/services/servicio_rest.dart';
+import 'package:weather/services/servicio_ubicacion.dart';
+import 'package:weather/services/servicio_google.dart';
+import 'package:weather/services/servicio_distancia.dart';
+
 /// Punto de entrada principal de la aplicación Clima UTEM.
 ///
 /// Esta función se ejecuta al iniciar la aplicación y realiza las siguientes
@@ -27,7 +34,45 @@ import 'package:weather/screen/login_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GoogleSignIn.instance.initialize();
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider(
+          create: (_) => ServicioRest(),
+        ),
+
+        Provider(
+          create: (_) => ServicioUbicacion(),
+        ),
+
+        Provider(
+          create: (_) => ServicioGoogle(),
+        ),
+
+        Provider(
+          create: (_) => ServicioDistancia(),
+        ),
+
+        ChangeNotifierProvider(
+          create: (context) =>
+              WeatherScreenController(
+                servicioRest:
+                context.read<ServicioRest>(),
+
+                servicioUbicacion:
+                context.read<ServicioUbicacion>(),
+
+                servicioGoogle:
+                context.read<ServicioGoogle>(),
+
+                servicioDistancia:
+                context.read<ServicioDistancia>(),
+              ),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 /// Widget raíz de la aplicación Clima UTEM.
