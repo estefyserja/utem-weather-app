@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 
-import 'package:weather/consts/app_colors.dart';
-import 'package:weather/model/coordenada.dart';
+import 'package:weather/controller/weather_screen_controller.dart';
 import 'package:weather/model/farmacia.dart';
+import 'package:weather/consts/app_colors.dart';
 
 class MapaClimaWidget extends StatelessWidget {
-  final Coordenada coordenada;
-  final Farmacia? farmacia;
-
   const MapaClimaWidget({
     super.key,
-    required this.coordenada,
-    required this.farmacia,
   });
 
   void _mostrarFarmacia(
@@ -86,7 +82,22 @@ class MapaClimaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LatLng puntoCentral = LatLng(
+    final controlador =
+    context.watch<WeatherScreenController>();
+
+    final coordenada =
+        controlador.coordenadaActual;
+
+    final farmacia =
+        controlador.farmacia;
+
+    if (coordenada == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    final puntoCentral = LatLng(
       coordenada.latitud,
       coordenada.longitud,
     );
@@ -117,14 +128,14 @@ class MapaClimaWidget extends StatelessWidget {
             if (farmacia != null)
               Marker(
                 point: LatLng(
-                  farmacia!.latitud,
-                  farmacia!.longitud,
+                  farmacia.latitud,
+                  farmacia.longitud,
                 ),
                 width: 50,
                 height: 50,
                 child: GestureDetector(
                   onTap: () {
-                    _mostrarFarmacia(context, farmacia!);
+                    _mostrarFarmacia(context, farmacia);
                   },
                   child: const Icon(
                     Icons.local_pharmacy,

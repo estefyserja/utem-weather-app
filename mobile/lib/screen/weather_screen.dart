@@ -151,11 +151,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
               // Estado exitoso con datos
               return Column(
                 children: <Widget>[
-                  Expanded(
-                    child: MapaClimaWidget(
-                      coordenada: controlador.coordenadaActual!,
-                      farmacia: controlador.farmacia,
-                    ),
+                  const Expanded(
+                    child: MapaClimaWidget(),
                   ),
                   const Divider(
                     height: 1,
