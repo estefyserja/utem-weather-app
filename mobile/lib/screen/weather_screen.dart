@@ -164,9 +164,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: ClimaWidget(
-                      controlador: controlador,
-                    ),
+                    child: const ClimaWidget(),
                   ),
                 ],
               );

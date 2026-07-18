@@ -2,18 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:weather/consts/app_colors.dart';
 import 'package:weather/controller/weather_screen_controller.dart';
 import 'package:weather/model/observacion_meteo.dart';
+import 'package:provider/provider.dart';
 
 class ClimaWidget extends StatelessWidget {
-  final WeatherScreenController controlador;
-
   const ClimaWidget({
     super.key,
-    required this.controlador,
   });
 
   @override
   Widget build(BuildContext context) {
-    return _construirSeccionClima();
+    return Selector<WeatherScreenController, ObservacionMeteo?>(
+      selector: (_, controlador) =>
+      controlador.observacionMeteo,
+
+      builder: (context, clima, child) {
+
+        if (clima == null) {
+          return const SizedBox();
+        }
+
+        return _construirSeccionClima(clima);
+      },
+    );
   }
 
   Widget _construirFilaClima(String etiqueta, String valor) {
@@ -42,9 +52,8 @@ class ClimaWidget extends StatelessWidget {
     );
   }
 
-Widget _construirSeccionClima() {
-  final ObservacionMeteo clima = controlador.observacionMeteo!;
-  return SingleChildScrollView(
+  Widget _construirSeccionClima(ObservacionMeteo clima,) {
+    return SingleChildScrollView(
     padding: const EdgeInsets.all(24.0),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,5 +89,6 @@ Widget _construirSeccionClima() {
       ],
     ),
   );
+
   }
 }
