@@ -26,69 +26,139 @@ class ClimaWidget extends StatelessWidget {
     );
   }
 
-  Widget _construirFilaClima(String etiqueta, String valor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+  Widget _construirFilaClima(
+      IconData icono,
+      Color colorIcono,
+      String etiqueta,
+      String valor,
+      ) {
+    return Container(
+
+      margin:
+      const EdgeInsets.symmetric(vertical: 6),
+
+      padding:
+      const EdgeInsets.all(12),
+
+      decoration:
+      BoxDecoration(
+
+        color:
+        Colors.grey.shade100,
+
+        borderRadius:
+        BorderRadius.circular(12),
+
+      ),
+
+
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            etiqueta,
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w500,
+
+        children: [
+
+          Icon(
+            icono,
+            color: colorIcono,
+            size: 30,
+          ),
+
+
+          const SizedBox(
+            width: 15,
+          ),
+
+
+          Expanded(
+
+            child: Text(
+
+              etiqueta,
+
+              style: const TextStyle(
+                fontSize:16,
+                fontWeight:FontWeight.w500,
+              ),
+
             ),
           ),
+
+
           Text(
+
             valor,
+
             style: const TextStyle(
-              fontSize: 16.0,
-              color: AppColors.azulAcentuado,
-              fontWeight: FontWeight.w600,
+              fontSize:16,
+              color:AppColors.azulAcentuado,
+              fontWeight:FontWeight.w600,
             ),
+
           ),
+
         ],
       ),
     );
   }
 
-  Widget _construirSeccionClima(ObservacionMeteo clima,) {
+  Widget _construirSeccionClima(ObservacionMeteo clima) {
+
     return SingleChildScrollView(
-    padding: const EdgeInsets.all(24.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text(
-          'Indicadores Climáticos Actuales',
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
+      padding: const EdgeInsets.all(16.0),
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment:
+            CrossAxisAlignment.start,
+
+            children: <Widget>[
+              const Text(
+                'Condiciones actuales',
+
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height:16),
+
+              _construirFilaClima(
+                Icons.numbers,
+                Colors.blueGrey,
+                'ID Observación',
+                clima.idObservacion.toString(),
+              ),
+
+              _construirFilaClima(
+                Icons.thermostat,
+                Colors.red,
+                'Temperatura',
+                '${clima.temperatura.toStringAsFixed(1)} ºC',
+              ),
+
+              _construirFilaClima(
+                Icons.water_drop,
+                Colors.blue,
+                'Humedad',
+                '${clima.humedad}%',
+              ),
+
+              _construirFilaClima(
+                Icons.wb_sunny,
+                Colors.orange,
+                'UV',
+                '${clima.ultravioleta}',
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 16.0),
-
-        _construirFilaClima(
-          'ID Observación',
-          clima.idObservacion.toString(),
-        ),
-
-        _construirFilaClima(
-          'Temperatura',
-          '${clima.temperatura.toStringAsFixed(1)} ºC',
-        ),
-
-        _construirFilaClima(
-          'Humedad',
-          '${clima.humedad}%',
-        ),
-
-        _construirFilaClima(
-          'UV',
-          '${clima.ultravioleta}',
-        ),
-      ],
-    ),
-  );
-
+      ),
+    );
   }
 }
