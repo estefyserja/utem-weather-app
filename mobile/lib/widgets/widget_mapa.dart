@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:weather/controller/weather_screen_controller.dart';
 import 'package:weather/model/farmacia.dart';
 import 'package:weather/consts/app_colors.dart';
+import 'package:weather/model/coordenada.dart';
 
 class MapaClimaWidget extends StatelessWidget {
   const MapaClimaWidget({
@@ -82,71 +83,87 @@ class MapaClimaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controlador =
-    context.watch<WeatherScreenController>();
 
-    final coordenada =
-        controlador.coordenadaActual;
+    return Selector<WeatherScreenController, Coordenada?>(
+      selector: (_, controlador) =>
+      controlador.coordenadaActual,
 
-    final farmacia =
-        controlador.farmacia;
+      builder: (context, coordenada, child) {
 
-    if (coordenada == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+        if (coordenada == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-    final puntoCentral = LatLng(
-      coordenada.latitud,
-      coordenada.longitud,
-    );
+        final puntoCentral = LatLng(
+          coordenada.latitud,
+          coordenada.longitud,
+        );
 
-    return FlutterMap(
-      options: MapOptions(
-        initialCenter: puntoCentral,
-        initialZoom: 15,
-      ),
-      children: [
-        TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.example.weather',
-        ),
-        MarkerLayer(
-          markers: [
-            Marker(
-              point: puntoCentral,
-              width: 40,
-              height: 40,
-              child: const Icon(
-                Icons.location_pin,
-                color: AppColors.rojo,
-                size: 40,
-              ),
+        final farmacia =
+            context.read<WeatherScreenController>().farmacia;
+
+
+        return FlutterMap(
+          options: MapOptions(
+            initialCenter: puntoCentral,
+            initialZoom: 15,
+          ),
+
+          children: [
+            TileLayer(
+              urlTemplate:
+              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+              userAgentPackageName:
+              'com.example.weather',
             ),
 
-            if (farmacia != null)
-              Marker(
-                point: LatLng(
-                  farmacia.latitud,
-                  farmacia.longitud,
-                ),
-                width: 50,
-                height: 50,
-                child: GestureDetector(
-                  onTap: () {
-                    _mostrarFarmacia(context, farmacia);
-                  },
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: puntoCentral,
+                  width: 40,
+                  height: 40,
                   child: const Icon(
-                    Icons.local_pharmacy,
-                    color: Colors.green,
+                    Icons.location_pin,
+                    color: AppColors.rojo,
                     size: 40,
                   ),
                 ),
-              ),
+
+
+                if (farmacia != null)
+                  Marker(
+                    point: LatLng(
+                      farmacia.latitud,
+                      farmacia.longitud,
+                    ),
+
+                    width: 50,
+                    height: 50,
+
+                    child: GestureDetector(
+                      onTap: () {
+                        _mostrarFarmacia(
+                          context,
+                          farmacia,
+                        );
+                      },
+
+                      child: const Icon(
+                        Icons.local_pharmacy,
+                        color: Colors.green,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 }
