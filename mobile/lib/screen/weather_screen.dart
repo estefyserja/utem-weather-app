@@ -7,6 +7,9 @@ import 'package:weather/widgets/my_menu.dart';
 import 'package:weather/screen/farmacia_screen.dart';
 import 'package:weather/widgets/widget_mapa.dart';
 import 'package:weather/widgets/clima_widget.dart';
+import 'package:weather/widgets/estado_carga_widget.dart';
+import 'package:weather/widgets/estado_error_widget.dart';
+import 'package:weather/widgets/estado_vacio_widget.dart';
 
 /// Pantalla principal de monitoreo meteorológico.
 ///
@@ -132,20 +135,26 @@ class _WeatherScreenState extends State<WeatherScreen> {
             ) {
               // Estado de carga
               if (controlador.estaCargando) {
-                return _construirEstadoCarga();
+                return const EstadoCargaWidget();
               }
 
               // Estado de error
               if (controlador.mensajeError != null) {
-                return _construirEstadoError(
+
+                return EstadoErrorWidget(
+
+                  mensaje:
                   controlador.mensajeError!,
+
+                  onReintentar:
                   controlador.reintentar,
+
                 );
               }
 
               // Estado vacío (sin datos)
               if (!controlador.tieneDatos) {
-                return _construirEstadoVacio();
+                return const EstadoVacioWidget();
               }
 
               // Estado exitoso con datos
@@ -166,93 +175,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 ],
               );
             },
-      ),
-    );
-  }
-
-  /// Construye el widget de estado de carga.
-  ///
-  /// Muestra un [CircularProgressIndicator] centrado con un mensaje
-  /// informativo debajo. El color del texto es [AppColors.gris].
-  Widget _construirEstadoCarga() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          CircularProgressIndicator(),
-          SizedBox(height: 16.0),
-          Text(
-            'Cargando datos meteorológicos...',
-            style: TextStyle(fontSize: 16.0, color: AppColors.gris),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Construye el widget de estado de error.
-  ///
-  /// Muestra un icono de error (Icons.error_outline) en rojo, el mensaje
-  /// de error en texto rojo y un botón "Reintentar" que ejecuta la
-  /// función [onReintentar].
-  ///
-  /// - [mensaje]: Texto descriptivo del error ocurrido.
-  /// - [onReintentar]: Función callback para reintentar la carga.
-  Widget _construirEstadoError(String mensaje, VoidCallback onReintentar) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Icon(Icons.error_outline, size: 64.0, color: AppColors.rojo),
-            const SizedBox(height: 16.0),
-            Text(
-              mensaje,
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w500,
-                color: AppColors.rojo,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24.0),
-            ElevatedButton.icon(
-              onPressed: onReintentar,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Reintentar'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 12.0,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Construye el widget de estado vacío.
-  ///
-  /// Se muestra cuando no hay datos disponibles después de la carga,
-  /// por ejemplo si el controlador tiene `tieneDatos == false`.
-  /// Muestra un icono de nube tachada (Icons.cloud_off) y un mensaje
-  /// "No hay datos meteorológicos disponibles".
-  Widget _construirEstadoVacio() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(Icons.cloud_off, size: 64.0, color: AppColors.gris),
-          SizedBox(height: 16.0),
-          Text(
-            'No hay datos meteorológicos disponibles',
-            style: TextStyle(fontSize: 16.0, color: AppColors.gris),
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
   }
